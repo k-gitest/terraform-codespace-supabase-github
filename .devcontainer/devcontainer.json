@@ -1,0 +1,20 @@
+{
+  "name": "Supabase Terraform Project",
+  "image": "mcr.microsoft.com/devcontainers/universal:latest", // 汎用的なベースイメージ
+  "features": {
+    // Terraform CLI のインストール
+    "ghcr.io/devcontainers/features/terraform:1": {
+      "version": "latest" // または "1.x.x" など特定のバージョン
+    }
+  },
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "hashicorp.terraform", // Terraform 用の VS Code 拡張機能
+        "ms-vscode.vscode-typescript-next" // 必要であれば他の拡張機能も追加
+      ]
+    }
+  },
+  // コンテナ作成後に自動実行するコマンド (例: terraform init)
+  "postCreateCommand": "terraform init"
+}

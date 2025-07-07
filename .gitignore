@@ -1,0 +1,8 @@
+# Terraform
+.terraform/
+*.tfstate
+*.tfstate.backup
+
+# Codespaces / VS Code 関連
+.vscode/
+
