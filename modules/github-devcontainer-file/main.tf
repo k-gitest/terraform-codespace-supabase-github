@@ -1,4 +1,11 @@
-# modules/github-devcontainer-file/main.tf
+terraform {
+  required_providers {
+    github = {
+      source  = "integrations/github"
+      version = "~> 5.0" # 使用したいバージョンを指定
+    }
+  }
+}
 
 resource "github_repository_file" "devcontainer_json" {
   repository          = var.repository_name

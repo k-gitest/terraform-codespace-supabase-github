@@ -95,3 +95,28 @@ module "devcontainer_setup" {
   # forward_ports  = [3000, 5173]
   # devcontainer_name = "My Custom App Dev"
 }
+
+# Cloudflare Pages プロジェクトの作成
+module "frontend_pages_project" {
+  source = "./modules/cloudflare-pages-project"
+
+  cloudflare_account_id = var.cloudflare_account_id
+  project_name          = "my-app-frontend" # 作成したいPagesプロジェクトの名前
+  production_branch     = "main"            # ここで上書きも可能
+}
+
+# 必要に応じて、別のワーカーモジュールなどを追加
+# module "backend_worker" {
+#   source = "./modules/cloudflare-worker"
+#   # ...
+# }
+
+output "frontend_pages_url" {
+  description = "The URL of the deployed Cloudflare Pages frontend."
+  value       = module.frontend_pages_project.project_url
+}
+
+output "frontend_pages_name" {
+  description = "The name of the Cloudflare Pages project."
+  value       = module.frontend_pages_project.project_name
+}
