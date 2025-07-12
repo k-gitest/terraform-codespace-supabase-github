@@ -190,6 +190,14 @@ project-root/
 ├── outputs.tf                  # 出力値定義
 ├── provider.tf                 # プロバイダー設定
 └── modules/
+    ├── github-actions-workflows/
+    │   ├── main.tf
+    │   ├── variables.tf
+    │   ├── outputs.tf
+    │   └── templates/
+    │       ├── ci-cd.yml.tpl
+    │       ├── deploy-supabase.yml.tpl
+    │       └── deploy-cloudflare.yml.tpl
     ├── cloudflare-pages-project/
     │   ├── main.tf
     │   ├── variables.tf

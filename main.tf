@@ -1,31 +1,5 @@
-# Supabaseプロジェクトのリソース定義
-/*
-resource "supabase_project" "my_project" {
-  organization_id   = var.supabase_organization_id # あなたのSupabase組織ID
-  name              = "my-awesome-supabase-project"
-  database_password = var.supabase_database_password # 強力なパスワードを設定
-  region            = "ap-northeast-1" # プロジェクトをデプロイするリージョン
-}
-*/
-
-# プロジェクトのIDを出力する
-/*
-output "project_id" {
-  description = "The ID of the Supabase project"
-  value       = supabase_project.my_project.id
-}
-*/
-
-# プロジェクトのURLを出力する
-/*
-output "project_url" {
-  description = "The URL of the Supabase project"
-  value       = "https://${supabase_project.my_project.id}.supabase.co"
-}
-*/
-
 # ---------------------------------------------
-# ここからがモジュールの呼び出し
+# モジュールの呼び出し
 # ---------------------------------------------
 module "my_supabase_project" {
   source = "./modules/supabase-project" # ローカルモジュールのパスを指定
@@ -37,15 +11,6 @@ module "my_supabase_project" {
   region            = "ap-northeast-1"
   # instance_size   = "micro" # Free Planの場合はこの行をコメントアウト
 }
-
-# --- movedブロックの追加 ---
-# 既存のsupabase_project.my_projectをmodule.my_supabase_project.supabase_project.thisに移動
-/*
-moved {
-  from = supabase_project.my_project
-  to   = module.my_supabase_project.supabase_project.this
-}
-*/
 
 # モジュールからの出力値を受け取る
 output "provisioned_project_id" {
@@ -65,10 +30,10 @@ module "my_github_repository" {
   repository_name = "supabase-spa-app"
   description     = "This is my awesome repository"
   visibility      = "private" # または "private"
-  has_issues      = true # イシューを有効にする
-  has_wiki        = false # ウィキを無効にする
-  has_projects    = false # プロジェクトを無効にする
-  auto_init       = true # リポジトリを自動的に初期化する
+  has_issues      = true      # イシューを有効にする
+  has_wiki        = false     # ウィキを無効にする
+  has_projects    = false     # プロジェクトを無効にする
+  auto_init       = true      # リポジトリを自動的に初期化する
 }
 # GitHubリポジトリの出力値を受け取る
 output "github_repository_url" {
@@ -88,7 +53,7 @@ module "devcontainer_setup" {
   #branch_name     = github_repository.my_dev_repo.default_branch # もし default_branch が取得できるなら
   # もし github_repository.my_dev_repo.default_branch がエラーになる場合、
   # 以下のように直接文字列で指定してもOK
-   branch_name     = "main"
+  branch_name = "main"
 
   # 必要に応じて、モジュール内の変数をオーバーライド
   # nodejs_version = "18"
@@ -119,4 +84,47 @@ output "frontend_pages_url" {
 output "frontend_pages_name" {
   description = "The name of the Cloudflare Pages project."
   value       = module.frontend_pages_project.project_name
+}
+
+# GitHub Actions ワークフロー
+module "github_actions_workflows" {
+  source = "./modules/github-actions-workflows"
+
+  repository_name = module.github_repository.name
+  default_branch  = var.github_default_branch
+  node_version    = var.node_version
+
+  # Supabase設定
+  supabase_project_id   = module.supabase_project.project_id
+  supabase_access_token = var.supabase_access_token
+  supabase_db_password  = var.supabase_database_password
+  supabase_db_url       = module.supabase_project.database_url
+  supabase_url          = module.supabase_project.api_url
+  supabase_anon_key     = module.supabase_project.anon_key
+
+  # Cloudflare設定
+  cloudflare_project_name = module.cloudflare_pages.project_name
+  cloudflare_account_id   = var.cloudflare_account_id
+  cloudflare_api_token    = var.cloudflare_api_token
+
+  # GitHub設定
+  github_token = var.github_token
+
+  # ビルド設定
+  build_command      = var.build_command
+  build_directory    = var.build_directory
+  test_command       = var.test_command
+  lint_command       = var.lint_command
+  type_check_command = var.type_check_command
+
+  # ワークフロー有効化設定
+  enable_ci_cd_workflow      = var.enable_ci_cd_workflow
+  enable_supabase_workflow   = var.enable_supabase_workflow
+  enable_cloudflare_workflow = var.enable_cloudflare_workflow
+
+  depends_on = [
+    module.github_repository,
+    module.supabase_project,
+    module.cloudflare_pages
+  ]
 }
