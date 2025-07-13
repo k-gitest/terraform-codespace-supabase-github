@@ -93,11 +93,13 @@ variable "enable_cloudflare_workflow" {
   default     = true
 }
 
+/*
 variable "build_command" {
   description = "ビルドコマンド"
   type        = string
   default     = "npm run build"
 }
+
 
 variable "build_directory" {
   description = "ビルド出力ディレクトリ"
@@ -122,3 +124,4 @@ variable "type_check_command" {
   type        = string
   default     = "npm run type-check"
 }
+*/

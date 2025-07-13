@@ -195,9 +195,9 @@ project-root/
     │   ├── variables.tf
     │   ├── outputs.tf
     │   └── templates/
-    │       ├── ci-cd.yml.tpl
-    │       ├── deploy-supabase.yml.tpl
-    │       └── deploy-cloudflare.yml.tpl
+    │       ├── ci.yml.tpl
+    │       ├── cd.yml.tpl
+    │       └── deploy-supabase.yml.tpl
     ├── cloudflare-pages-project/
     │   ├── main.tf
     │   ├── variables.tf

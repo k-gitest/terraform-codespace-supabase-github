@@ -13,16 +13,16 @@ resource "github_repository_file" "ci_cd_workflow" {
   repository = var.repository_name
   branch     = var.default_branch
   file       = ".github/workflows/ci-cd.yml"
-  content = templatefile("${path.module}/templates/ci-cd.yml.tpl", {
+  content = templatefile("${path.module}/templates/ci.yml.tpl", {
     supabase_project_id     = var.supabase_project_id
     cloudflare_project_name = var.cloudflare_project_name
     node_version            = var.node_version
     supabase_db_url         = var.supabase_db_url
-    build_command           = var.build_command
-    build_directory         = var.build_directory
-    test_command            = var.test_command
-    lint_command            = var.lint_command
-    type_check_command      = var.type_check_command
+    #build_command           = var.build_command
+    #build_directory         = var.build_directory
+    #test_command            = var.test_command
+    #lint_command            = var.lint_command
+    #type_check_command      = var.type_check_command
   })
   commit_message      = "Add CI/CD workflow"
   commit_author       = "Terraform"
@@ -36,7 +36,7 @@ resource "github_repository_file" "supabase_workflow" {
   repository = var.repository_name
   branch     = var.default_branch
   file       = ".github/workflows/supabase.yml"
-  content = templatefile("${path.module}/templates/supabase.yml.tpl", {
+  content = templatefile("${path.module}/templates/deploy-supabase.yml.tpl", {
     supabase_project_id = var.supabase_project_id
     supabase_db_url     = var.supabase_db_url
   })
@@ -52,12 +52,12 @@ resource "github_repository_file" "cloudflare_workflow" {
   repository = var.repository_name
   branch     = var.default_branch
   file       = ".github/workflows/deploy-cloudflare.yml"
-  content = templatefile("${path.module}/templates/deploy-cloudflare.yml.tpl", {
+  content = templatefile("${path.module}/templates/cd.yml.tpl", {
     cloudflare_project_name = var.cloudflare_project_name
     cloudflare_account_id   = var.cloudflare_account_id
     node_version            = var.node_version
-    build_command           = var.build_command
-    build_directory         = var.build_directory
+    #build_command           = var.build_command
+    #build_directory         = var.build_directory
   })
   commit_message      = "Add Cloudflare Pages deployment workflow"
   commit_author       = "Terraform"

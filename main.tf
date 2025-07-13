@@ -90,20 +90,20 @@ output "frontend_pages_name" {
 module "github_actions_workflows" {
   source = "./modules/github-actions-workflows"
 
-  repository_name = module.github_repository.name
+  repository_name = module.my_github_repository.repository_name 
   default_branch  = var.github_default_branch
   node_version    = var.node_version
 
   # Supabase設定
-  supabase_project_id   = module.supabase_project.project_id
+  supabase_project_id   = module.my_supabase_project.project_id
   supabase_access_token = var.supabase_access_token
   supabase_db_password  = var.supabase_database_password
-  supabase_db_url       = module.supabase_project.database_url
-  supabase_url          = module.supabase_project.api_url
-  supabase_anon_key     = module.supabase_project.anon_key
+  supabase_db_url       = module.my_supabase_project.database_url
+  supabase_url          = module.my_supabase_project.project_url
+  supabase_anon_key     = module.my_supabase_project.anon_key
 
   # Cloudflare設定
-  cloudflare_project_name = module.cloudflare_pages.project_name
+  cloudflare_project_name = module.frontend_pages_project.project_name
   cloudflare_account_id   = var.cloudflare_account_id
   cloudflare_api_token    = var.cloudflare_api_token
 
@@ -111,11 +111,13 @@ module "github_actions_workflows" {
   github_token = var.github_token
 
   # ビルド設定
+  /*
   build_command      = var.build_command
   build_directory    = var.build_directory
   test_command       = var.test_command
   lint_command       = var.lint_command
   type_check_command = var.type_check_command
+  */
 
   # ワークフロー有効化設定
   enable_ci_cd_workflow      = var.enable_ci_cd_workflow
@@ -123,8 +125,8 @@ module "github_actions_workflows" {
   enable_cloudflare_workflow = var.enable_cloudflare_workflow
 
   depends_on = [
-    module.github_repository,
-    module.supabase_project,
-    module.cloudflare_pages
+    module.my_github_repository,
+    module.my_supabase_project,
+    module.frontend_pages_project,
   ]
 }
