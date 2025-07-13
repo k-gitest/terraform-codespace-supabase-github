@@ -263,5 +263,39 @@ terraform {
 }
 ```
 
+# Terraform で GitHub Actions の `${{...}}` を使用した場合のエラー対応
+
+Terraform の `templatefile()` を使って GitHub Actions のワークフローを `.yml.tpl` として管理する場合、GitHub Actions の構文 `${{ … }}` はそのままではエラーになります。
+
+## 🪲 原因
+
+Terraform のテンプレートエンジンは `.tpl` 内の文字列をパースする際に、`${…}` を自分の変数展開だと誤認識してしまい、以下のようなエラーが発生します：
+
+```
+Error: Invalid character; Single quotes are not valid. Use double quotes (") to enclose strings.
+```
+
+```
+Call to function "templatefile" failed: Missing key/value separator; Expected an equals sign ("=") to mark the beginning of the attribute value.
+```
+
+これは、GitHub Actions の `${{ github.xxx }}` が Terraform の `${}` と衝突するためです。
+
+## 🛠️ 対応方法
+
+`.tpl` 内のすべての `${{ … }}` を、Terraform に無視させるために `$${{ … }}` と書きます。
+
+```yaml
+# 修正前
+if: ${{ github.event.workflow_run.conclusion == "success" }}
+
+# 修正後
+if: $${{ github.event.workflow_run.conclusion == "success" }}
+```
+
+このように先頭の `$` を重ねることで、Terraform は `${` を自分のものとしてパースせず、出力時には `$` ひとつのままファイルに書き出されます。
+   
+この方法により、Terraform のテンプレート機能を活用しながら、GitHub Actions の構文を正しく扱うことができます。
+
 ## 参考資料
 - [公式ドキュメント](https://developer.hashicorp.com/terraform/language/modules/develop/providers)
