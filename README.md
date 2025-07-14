@@ -302,4 +302,32 @@ if: $${{ github.event.workflow_run.conclusion == "success" }}
    
 この方法により、Terraform のテンプレート機能を活用しながら、GitHub Actions の構文を正しく扱うことができます。
 
+## github actionsの権限設定
+GitHub Actionsがリポジトリ内のファイルやシークレット、変数を操作できるように、適切な権限を持つPATを生成し、Terraformの実行環境に設定する必要があります。
 
+Fine-grained personal access token を使用してください。
+
+### PATに付与する権限（Repository Permissions）
+新しいPATを生成する際、または既存のPATを更新する際に、以下のリポジトリ権限を必ず付与してください。
+
+**Repository Access**:
+
+All repositories または、このプロジェクトのリポジトリを Selected repositories に含める。
+
+**Repository Permissions**:
+
+- Administration: Read and Write
+- Contents: Read and Write
+- Secrets: Read and Write
+- Workflows: Read and Write
+- Variables: Read and Write
+- Metadata: Read-only (これはデフォルトで付与されることが多いですが、念のため確認)
+
+特に Secrets、Workflows、Variables の Read and Write 権限が重要です。 これらの権限が不足していると、TerraformによるGitHub Actions関連リソースの作成・更新が 403 Resource not accessible エラーで失敗します。
+
+**PATの有効期限**
+セキュリティのため、PATの有効期限は必要最低限の期間に設定することをお勧めしますが、CI/CDパイプラインの安定運用を考慮し、定期的な更新を計画してください。
+
+### 403 Resource not accessible by personal access tokenの場合
+`403 Resource not accessible by personal access token`
+このエラーが出た場合、上記のPAT設定をまず確認することを推奨します。
