@@ -15,6 +15,7 @@ Terraform CloudとGitHub Codespacesを使用してSupabaseプロジェクトを�
 | **Supabase** | バックエンドサービス | 最新版 |
 | **GitHub Codespaces** | クラウド開発環境 | 最新版 |
 | **Cloudflare Workers & Pages** | エッジコンピューティング/サーバーレスプラットフォーム | 最新版 |
+| **Github Actions** | CI/CDプラットフォーム | 最新版 |
 
 ## 機能
 
@@ -27,6 +28,7 @@ Terraform CloudとGitHub Codespacesを使用してSupabaseプロジェクトを�
 - **自動リポジトリ作成**: GitHubリポジトリの自動生成
 - **開発環境の統一**: 開発時に同じ環境を使用
 - **デプロイ先の自動準備**: Cloudflareによるエッジ環境のデプロイ先を自動作成
+- **テストとデプロイの自動化**: アプリケーションのテストとデプロイの自動化
 
 ## 事前準備
 
@@ -263,11 +265,14 @@ terraform {
 }
 ```
 
-# Terraform で GitHub Actions の `${{...}}` を使用した場合のエラー対応
+### 参考資料
+- [公式ドキュメント](https://developer.hashicorp.com/terraform/language/modules/develop/providers)
+
+## Terraform で GitHub Actions の `${{...}}` を使用した場合のエラー対応
 
 Terraform の `templatefile()` を使って GitHub Actions のワークフローを `.yml.tpl` として管理する場合、GitHub Actions の構文 `${{ … }}` はそのままではエラーになります。
 
-## 🪲 原因
+### 🪲 原因
 
 Terraform のテンプレートエンジンは `.tpl` 内の文字列をパースする際に、`${…}` を自分の変数展開だと誤認識してしまい、以下のようなエラーが発生します：
 
@@ -281,7 +286,7 @@ Call to function "templatefile" failed: Missing key/value separator; Expected an
 
 これは、GitHub Actions の `${{ github.xxx }}` が Terraform の `${}` と衝突するためです。
 
-## 🛠️ 対応方法
+### 🛠️ 対応方法
 
 `.tpl` 内のすべての `${{ … }}` を、Terraform に無視させるために `$${{ … }}` と書きます。
 
@@ -297,5 +302,4 @@ if: $${{ github.event.workflow_run.conclusion == "success" }}
    
 この方法により、Terraform のテンプレート機能を活用しながら、GitHub Actions の構文を正しく扱うことができます。
 
-## 参考資料
-- [公式ドキュメント](https://developer.hashicorp.com/terraform/language/modules/develop/providers)
+
